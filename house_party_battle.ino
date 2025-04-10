@@ -17,6 +17,7 @@ const int buttPin = 4; // pin for the button at the end
 
 // the values of the pins, to detect when things are placed upon them
 int sisterVal1; // value for setting Adaine and Aelwyn up outside
+int spiritVal; // value for setting up the spirit guardians
 int webVal; // value for Aelwyn in the web
 int cycleVal; // value for the motorcycle on the stairs with Adaine attached
 int sisterVal2; // value for setting Adaine and Aelwyn up inside
@@ -48,24 +49,42 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  sisterVal1 = digitalRead(sPin1); // get the outside Adaine and Aelwyn value
+  sisterVal1 = digitalRead(sisterPin1); // get the outside Adaine and Aelwyn value
+  spiritVal = digitalRead(spiritPin); // get the spirit guardians value
   webVal = digitalRead(webPin); // get the web value
   cycleVal = digitalRead(cyclePin); // get the motorcycle value
   sisterVal2 = digitalRead(sisterPin2); // get the inside Adaine and Aelwyn value
   buttVal = digitalRead(buttPin); // get the button value
   switch(stage){
-    case 0:
-
-    case 1:
-
-    case 2:
-
-    case 3:
-
-    case 4:
-
-    case 5:
-
+    case 0: // beginning, user must set up Adaine and Aelwyn
+      if (sisterVal == HIGH){ // when the button is pressed, go to the next stage.
+        // spin the elementals around here
+        // lift the garage door, when finished change stage
+        stage = 1;
+      }
+    case 1: // garage is open, user must place spirit guardians
+      if (spiritVal == HIGH){ // when the button is pressed, go to the next stage.
+        // lift up the lower floor door, then light up lower floor and change stage.
+        stage = 2;
+        lowerLit = true; // light up the lower floor
+      }
+    case 2: // first floor is open, user must set up web, Aelwyn, motorcycle, Adaine on motorcycle
+      if (webVal == HIGH && cycleVal == HIGH){ // when the web and cycle combo are set up, go to the next stage.
+        // lift up the upper floor door, dim the lower floor, then light up the upper floor and change stage.
+        stage = 3;
+        lowerLit = false; // dim the first floor
+        upperLit = true; // light up the lower floor
+      }
+    case 3: // second floor is open, user must set up Adaine and Aelwyn at the end
+      if (sisterVal2 == HIGH){ // when the button is pressed, go to the next stage.
+        stage = 4;
+      }
+    case 4: // Adaine and Aelwyn in place, user must press switch to end the sequence
+      if (sisterVal2 == HIGH && buttVal == HIGH){ // when the button is pressed, go to the next stage.
+        stage = 5;
+      }
+    case 5: // sequence is done, victory music plays
+      // play music here
     default:
       break;
   }
